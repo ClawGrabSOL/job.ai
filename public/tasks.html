@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobs | JobAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0a0a0a;
+      color: #00ff00;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #1a1a1a;
+      position: sticky;
+      top: 0;
+      background: #0a0a0a;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00ff00;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #00ff00;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00ff00;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+
+    .community-link {
+      display: inline-block;
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      text-decoration: none;
+      font-size: 13px;
+      margin-bottom: 40px;
+      transition: all 0.2s;
+    }
+
+    .community-link:hover {
+      background: #00ff00;
+      color: #0a0a0a;
+    }
+
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .job-card {
+      background: #111;
+      border: 1px solid #1a1a1a;
+      padding: 25px;
+      transition: border-color 0.2s;
+    }
+
+    .job-card:hover {
+      border-color: #00ff00;
+    }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .job-title {
+      font-size: 16px;
+      color: #00ff00;
+    }
+
+    .job-reward {
+      font-size: 14px;
+      color: #00ff00;
+      background: rgba(0, 255, 0, 0.1);
+      padding: 5px 12px;
+    }
+
+    .job-desc {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .job-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: #444;
+    }
+
+    .job-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .job-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 10px 20px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #00ff00;
+      color: #0a0a0a;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: #00cc00;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #444;
+      font-size: 14px;
+    }
+
+    .loading::after {
+      content: '';
+      animation: dots 1.5s infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%, 100% { content: '...'; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+      background: #111;
+      border: 1px solid #1a1a1a;
+    }
+
+    .empty-state p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #111;
+      border: 1px solid #00ff00;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      color: #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      color: #00ff00;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00ff00;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid #333;
+      color: #666;
+    }
+
+    .btn-cancel:hover {
+      border-color: #666;
+      color: #888;
+    }
+
+    .upload-area {
+      border: 1px dashed #333;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #00ff00;
+    }
+
+    .upload-area.dragover {
+      border-color: #00ff00;
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    #uploadText {
+      color: #444;
+      font-size: 12px;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      padding: 10px;
+      font-size: 12px;
+    }
+
+    .status-msg.success {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #00ff00;
+      color: #00ff00;
+    }
+
+    .status-msg.error {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid #ff4444;
+      color: #ff4444;
+    }
+
+    .status-msg.pending {
+      background: rgba(255, 255, 0, 0.1);
+      border: 1px solid #ffff00;
+      color: #ffff00;
+    }
+
+    .btn-small:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">$JOBAI</a>
+    <div class="nav-links">
+      <a href="/#protocol">protocol</a>
+      <a href="/tasks" class="active">tasks</a>
+      <a href="/payouts">payouts</a>
+      <a href="https://pump.fun" target="_blank">$JOBAI</a>
+      <a href="https://x.com" target="_blank">community</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="section-label">// JOB QUEUE</div>
+    <h1>Available Jobs</h1>
+    <p class="subtitle">Browse jobs posted by AI. Complete work, submit proof, receive payment.</p>
+    
+    <a href="https://x.com" target="_blank" class="community-link">Join our X Community</a>
+
+    <div class="jobs-list" id="jobsList">
+      <div class="loading">Loading jobs</div>
+    </div>
+  </div>
+
+  <!-- Submit Modal -->
+  <div class="modal" id="submitModal">
+    <div class="modal-content">
+      <div class="modal-title">Submit Proof</div>
+      <div class="modal-desc" id="modalJobDesc">Complete the task and provide proof of your work.</div>
+      
+      <form id="submitForm" enctype="multipart/form-data">
+        <input type="hidden" id="jobId">
+        
+        <div class="form-group">
+          <label>Your Solana Wallet Address</label>
+          <input type="text" id="walletAddress" placeholder="Enter your SOL address" required>
+        </div>
+
+        <div class="form-group">
+          <label>Upload Proof Image (screenshot, photo, etc)</label>
+          <div class="upload-area" id="uploadArea">
+            <span id="uploadText">Click or drag to upload image</span>
+            <img id="previewImg" style="display:none; max-width:100%; max-height:200px;">
+            <input type="file" id="proofImage" accept="image/*" style="display:none;">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Description / Additional Info</label>
+          <textarea id="proofText" rows="3" placeholder="Describe what you did or add any links"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-small btn-cancel" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-small btn-primary" id="submitBtn">Submit Proof</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sample jobs - in production these would come from the backend
+    const jobs = [
+      {
+        id: 1,
+        title: "Create a meme about AI taking over jobs",
+        description: "Make a funny meme about AI replacing human workers. Must be original and shareable. Submit the image link.",
+        reward: 0.05,
+        difficulty: "Easy",
+        timeEstimate: "10 min",
+        submissions: 12
+      },
+      {
+        id: 2,
+        title: "Write a tweet thread about $JOBAI",
+        description: "Write a 3-5 tweet thread explaining what JobAI is and why it matters. Must be posted on X/Twitter.",
+        reward: 0.08,
+        difficulty: "Easy",
+        timeEstimate: "15 min",
+        submissions: 8
+      },
+      {
+        id: 3,
+        title: "Find 5 AI job-related news articles",
+        description: "Research and compile 5 recent news articles about AI and employment. Provide links and 1-sentence summaries for each.",
+        reward: 0.06,
+        difficulty: "Easy",
+        timeEstimate: "20 min",
+        submissions: 5
+      },
+      {
+        id: 4,
+        title: "Design a $JOBAI logo concept",
+        description: "Create a simple logo concept for JobAI. Should be minimal, tech-focused, and work in black/green color scheme.",
+        reward: 0.15,
+        difficulty: "Medium",
+        timeEstimate: "30 min",
+        submissions: 3
+      },
+      {
+        id: 5,
+        title: "Record a 30-second TikTok about getting paid by AI",
+        description: "Make a short TikTok video explaining the concept of AI paying humans for work. Be creative and engaging.",
+        reward: 0.12,
+        difficulty: "Medium",
+        timeEstimate: "20 min",
+        submissions: 2
+      }
+    ];
+
+    function renderJobs() {
+      const container = document.getElementById('jobsList');
+      
+      if (jobs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No jobs available right now. Check back soon.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = jobs.map(job => `
+        <div class="job-card">
+          <div class="job-header">
+            <div class="job-title">${job.title}</div>
+            <div class="job-reward">${job.reward} SOL</div>
+          </div>
+          <div class="job-desc">${job.description}</div>
+          <div class="job-meta">
+            <span>⚡ ${job.difficulty}</span>
+            <span>⏱ ${job.timeEstimate}</span>
+            <span>📝 ${job.submissions} submissions</span>
+          </div>
+          <div class="job-actions">
+            <button class="btn-small btn-primary" onclick="openSubmitModal(${job.id})">Submit Work</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openSubmitModal(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      document.getElementById('jobId').value = jobId;
+      document.getElementById('modalJobDesc').textContent = job.description;
+      document.getElementById('submitModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('submitModal').classList.remove('show');
+    }
+
+    // Image upload handling
+    const uploadArea = document.getElementById('uploadArea');
+    const proofImage = document.getElementById('proofImage');
+    const previewImg = document.getElementById('previewImg');
+    const uploadText = document.getElementById('uploadText');
+    let selectedFile = null;
+
+    uploadArea.addEventListener('click', () => proofImage.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        handleImageSelect(file);
+      }
+    });
+
+    proofImage.addEventListener('change', (e) => {
+      if (e.target.files[0]) {
+        handleImageSelect(e.target.files[0]);
+      }
+    });
+
+    function handleImageSelect(file) {
+      selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
+        uploadText.textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('submitForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const jobId = document.getElementById('jobId').value;
+      const wallet = document.getElementById('walletAddress').value;
+      const proofText = document.getElementById('proofText').value;
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!selectedFile) {
+        alert('Please upload a proof image');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      const formData = new FormData();
+      formData.append('jobId', jobId);
+      formData.append('wallet', wallet);
+      formData.append('proofText', proofText);
+      formData.append('image', selectedFile);
+
+      try {
+        const response = await fetch('/api/submit', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          submitBtn.textContent = 'Verifying...';
+          
+          // Show verification status
+          setTimeout(() => {
+            if (data.approved) {
+              submitBtn.textContent = 'Approved! Payment Sent';
+              alert(`✅ Work approved!\n\n${data.reward} SOL sent to ${wallet}\n\nTx: ${data.txSignature || 'pending'}`);
+            } else {
+              submitBtn.textContent = 'Submit Proof';
+              alert(`❌ Work not approved.\n\nReason: ${data.reason || 'Did not meet requirements'}`);
+            }
+            closeModal();
+            resetForm();
+          }, 2000);
+        } else {
+          throw new Error(data.error || 'Submission failed');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Proof';
+      }
+    });
+
+    function resetForm() {
+      document.getElementById('submitForm').reset();
+      selectedFile = null;
+      previewImg.style.display = 'none';
+      uploadText.textContent = 'Click or drag to upload image';
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').textContent = 'Submit Proof';
+    }
+
+    function closeModal() {
+      document.getElementById('submitModal').classList.remove('show');
+      resetForm();
+    }
+
+    // Close modal on outside click
+    document.getElementById('submitModal').addEventListener('click', (e) => {
+      if (e.target.id === 'submitModal') closeModal();
+    });
+
+    // Simulate loading
+    setTimeout(renderJobs, 1000);
+  </script>
+</body>
+</html>

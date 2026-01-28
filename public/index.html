@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobAI | AI Pays You</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0a0a0a;
+      color: #00ff00;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: #00ff00;
+      color: #0a0a0a;
+    }
+
+    /* Scanline effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #1a1a1a;
+      position: sticky;
+      top: 0;
+      background: #0a0a0a;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00ff00;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #00ff00;
+    }
+
+    .nav-links a.active {
+      color: #00ff00;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .status {
+      font-size: 12px;
+      color: #00ff00;
+      margin-bottom: 20px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0.5; }
+    }
+
+    .terminal-prompt {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 400;
+      color: #888;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    h1 span {
+      color: #00ff00;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #00ff00;
+      animation: cursor 1s infinite;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    @keyframes cursor {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .section-label {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .protocol-section {
+      padding: 60px 0;
+    }
+
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .loop-step {
+      background: #111;
+      border: 1px solid #1a1a1a;
+      padding: 30px;
+      position: relative;
+    }
+
+    .loop-step:hover {
+      border-color: #00ff00;
+    }
+
+    .step-number {
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      background: #00ff00;
+      color: #0a0a0a;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .step-title {
+      font-size: 14px;
+      color: #00ff00;
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .step-code {
+      font-size: 12px;
+      color: #444;
+      margin-top: 15px;
+    }
+
+    .why-section {
+      margin-top: 60px;
+      padding: 40px;
+      background: #111;
+      border: 1px solid #1a1a1a;
+    }
+
+    .why-section h3 {
+      font-size: 14px;
+      color: #00ff00;
+      margin-bottom: 15px;
+    }
+
+    .why-section p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.8;
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 15px 40px;
+      background: #00ff00;
+      color: #0a0a0a;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      margin: 10px;
+    }
+
+    .btn:hover {
+      background: #00cc00;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+    }
+
+    .btn-outline:hover {
+      background: #00ff00;
+      color: #0a0a0a;
+    }
+
+    footer {
+      border-top: 1px solid #1a1a1a;
+      padding: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #444;
+    }
+
+    @media (max-width: 768px) {
+      .loop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">$JOBAI</a>
+    <div class="nav-links">
+      <a href="/#protocol">protocol</a>
+      <a href="/tasks">tasks</a>
+      <a href="/payouts">payouts</a>
+      <a href="https://pump.fun" target="_blank">$JOBAI</a>
+      <a href="https://x.com" target="_blank">community</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="status">SYSTEM_STATUS: OPERATIONAL</div>
+      <div class="terminal-prompt">ai@jobai:~$</div>
+      <h1>
+        <span>The first AI that pays you to work.</span><br><br>
+        Real tasks. Real verification. Real payments.<br>
+        No bosses. No applications. Just work and earn.
+      </h1>
+      <span class="cursor"></span>
+    </section>
+
+    <section class="protocol-section" id="protocol">
+      <div class="section-label">// CORE PROTOCOL</div>
+      <h2>The Job Loop</h2>
+      <p style="color: #666; font-size: 14px;">A perpetual cycle where AI posts jobs, verifies work, and pays humans autonomously.</p>
+
+      <div class="loop-grid">
+        <div class="loop-step">
+          <div class="step-number">01</div>
+          <div class="step-title">pool.fill()</div>
+          <div class="step-desc">Job pool accumulates funds from protocol revenue and token taxes.</div>
+          <div class="step-code">balance += revenue</div>
+        </div>
+
+        <div class="loop-step">
+          <div class="step-number">02</div>
+          <div class="step-title">ai.analyze(pool)</div>
+          <div class="step-desc">AI analyzes available budget and generates appropriate tasks.</div>
+          <div class="step-code">tasks = generateTasks(budget)</div>
+        </div>
+
+        <div class="loop-step">
+          <div class="step-number">03</div>
+          <div class="step-title">jobs.publish()</div>
+          <div class="step-desc">AI broadcasts available jobs with clear requirements and rewards.</div>
+          <div class="step-code">emit JobPosted(id, reward, requirements)</div>
+        </div>
+
+        <div class="loop-step">
+          <div class="step-number">04</div>
+          <div class="step-title">worker.submit(proof)</div>
+          <div class="step-desc">Humans complete jobs and submit proof of work.</div>
+          <div class="step-code">submitProof(jobId, evidence)</div>
+        </div>
+
+        <div class="loop-step">
+          <div class="step-number">05</div>
+          <div class="step-title">ai.verify(multimodal)</div>
+          <div class="step-desc">AI validates work using vision, text, and pattern analysis.</div>
+          <div class="step-code">isValid = await verify(proof)</div>
+        </div>
+
+        <div class="loop-step">
+          <div class="step-number">06</div>
+          <div class="step-title">payment.execute()</div>
+          <div class="step-desc">Verified work triggers instant SOL transfer to worker.</div>
+          <div class="step-code">transfer(worker.wallet, reward)</div>
+        </div>
+      </div>
+
+      <div class="why-section">
+        <h3>> Why does this matter?</h3>
+        <p>
+          "I got paid by an AI" isn't just a sentence—it's a paradigm shift. 
+          No resumes. No interviews. No waiting for approval. 
+          Just complete the task, prove you did it, and get paid instantly.
+          This is the future of work: permissionless, instant, and autonomous.
+        </p>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <a href="/tasks" class="btn">View Available Jobs</a>
+      <a href="https://pump.fun" class="btn btn-outline" target="_blank">Buy $JOBAI</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>JobAI Protocol — Built on Solana — Powered by AI</p>
+  </footer>
+</body>
+</html>
