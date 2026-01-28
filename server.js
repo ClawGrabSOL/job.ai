@@ -29,11 +29,18 @@ const connection = new Connection(
 let poolKeypair = null;
 if (process.env.POOL_PRIVATE_KEY) {
   try {
-    const secretKey = JSON.parse(process.env.POOL_PRIVATE_KEY);
+    let secretKey;
+    const pk = process.env.POOL_PRIVATE_KEY.trim();
+    // Handle both formats: JSON array or comma-separated
+    if (pk.startsWith('[')) {
+      secretKey = JSON.parse(pk);
+    } else {
+      secretKey = pk.split(',').map(n => parseInt(n.trim()));
+    }
     poolKeypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
     console.log('Pool wallet loaded:', poolKeypair.publicKey.toBase58());
   } catch (e) {
-    console.log('Pool wallet not configured');
+    console.log('Pool wallet not configured:', e.message);
   }
 }
 
