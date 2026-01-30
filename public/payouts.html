@@ -70,11 +70,14 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .logo-icon {
-      font-size: 22px;
+    .logo-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--red);
     }
 
     .nav-links {
@@ -315,14 +318,14 @@
 <body>
   <nav>
     <a href="/" class="logo">
-      <span class="logo-icon">🦀</span>
+      <img src="/logo.jpg" alt="Clawdployer" class="logo-img">
       CLAWDPLOYER
     </a>
     <div class="nav-links">
       <a href="/#protocol">protocol</a>
       <a href="/tasks">tasks</a>
       <a href="/payouts" class="active">payouts</a>
-      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" target="_blank">$CLAWD</a>
+      <a href="#" id="buyLink">$CLAWD</a>
       <a href="https://x.com/clawdployer" target="_blank">community</a>
     </div>
   </nav>
