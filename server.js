@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const OpenAI = require('openai');
 const multer = require('multer');
+const bs58 = require('bs58');
 const { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PER_SOL } = require('@solana/web3.js');
 
 const app = express();
@@ -31,12 +32,19 @@ if (process.env.POOL_PRIVATE_KEY) {
   try {
     let secretKey;
     const pk = process.env.POOL_PRIVATE_KEY.trim();
+    
     if (pk.startsWith('[')) {
-      secretKey = JSON.parse(pk);
+      // JSON array format: [1,2,3,...]
+      secretKey = new Uint8Array(JSON.parse(pk));
+    } else if (pk.includes(',')) {
+      // Comma-separated format: 1,2,3,...
+      secretKey = new Uint8Array(pk.split(',').map(n => parseInt(n.trim())));
     } else {
-      secretKey = pk.split(',').map(n => parseInt(n.trim()));
+      // Base58 format (from Phantom, etc.)
+      secretKey = bs58.decode(pk);
     }
-    poolKeypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
+    
+    poolKeypair = Keypair.fromSecretKey(secretKey);
     console.log('🦀 Pool wallet loaded:', poolKeypair.publicKey.toBase58());
   } catch (e) {
     console.log('Pool wallet not configured:', e.message);
