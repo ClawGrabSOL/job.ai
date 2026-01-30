@@ -31,47 +31,109 @@ if (process.env.POOL_PRIVATE_KEY) {
   try {
     let secretKey;
     const pk = process.env.POOL_PRIVATE_KEY.trim();
-    // Handle both formats: JSON array or comma-separated
     if (pk.startsWith('[')) {
       secretKey = JSON.parse(pk);
     } else {
       secretKey = pk.split(',').map(n => parseInt(n.trim()));
     }
     poolKeypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
-    console.log('Pool wallet loaded:', poolKeypair.publicKey.toBase58());
+    console.log('🦀 Pool wallet loaded:', poolKeypair.publicKey.toBase58());
   } catch (e) {
     console.log('Pool wallet not configured:', e.message);
   }
 }
 
-// Jobs database (in production, use real DB)
+// Clawdployer Tasks
 const jobs = [
   {
     id: 1,
-    title: "Create a meme about AI taking over jobs",
-    description: "Make a funny meme about AI replacing human workers. Must be original, funny, and shareable.",
-    reward: 0.05,
-    difficulty: "Easy",
-    timeEstimate: "10 min",
-    verificationPrompt: "Is this a funny, original meme about AI taking over jobs or replacing workers?"
+    title: "Create a Clawdbot tutorial video",
+    description: "Record a short video (2-5 min) showing how to set up and use Clawdbot. Cover installation, basic commands, and one cool feature. Post to YouTube/TikTok.",
+    reward: 0.25,
+    difficulty: "Medium",
+    timeEstimate: "45 min",
+    verificationPrompt: "Does this show a video tutorial about Clawdbot? Look for: installation steps, command usage, demonstration of features. Should be 2-5 minutes and posted publicly."
   },
   {
     id: 2,
-    title: "Write a tweet thread about $JOBAI",
-    description: "Write a 3-5 tweet thread explaining what JobAI is and why it matters. Screenshot your posted tweets.",
-    reward: 0.08,
-    difficulty: "Easy", 
-    timeEstimate: "15 min",
-    verificationPrompt: "Does this show a tweet thread (3-5 tweets) about JobAI explaining what it is?"
+    title: "Write a Clawdbot skill",
+    description: "Create a new skill for Clawdbot that adds useful functionality. Must include SKILL.md with proper documentation.",
+    reward: 0.50,
+    difficulty: "Hard",
+    timeEstimate: "2-4 hrs",
+    verificationPrompt: "Does this show a Clawdbot skill? Look for: SKILL.md file, proper folder structure, code files. Should include documentation and working code."
   },
   {
     id: 3,
-    title: "Design a $JOBAI logo concept",
-    description: "Create a simple logo concept for JobAI. Should be minimal, tech-focused, and work in green/black.",
+    title: "Design Clawdployer banners",
+    description: "Create a set of 3 social media banners for Clawdployer (Twitter header, Discord banner, and a 1080x1080 square). Red/black theme with the 🦀 crab.",
+    reward: 0.15,
+    difficulty: "Easy",
+    timeEstimate: "30 min",
+    verificationPrompt: "Does this show social media banners? Look for: red/black color scheme, crab emoji or crab imagery, multiple banner sizes, professional quality."
+  },
+  {
+    id: 4,
+    title: "Translate Clawdbot docs to Spanish",
+    description: "Translate the main README and getting-started guide to Spanish. Must be natural, not machine-translated.",
+    reward: 0.20,
+    difficulty: "Medium",
+    timeEstimate: "1 hr",
+    verificationPrompt: "Does this show Spanish translations of Clawdbot documentation? Look for: natural Spanish language, complete translation of key docs, proper formatting."
+  },
+  {
+    id: 5,
+    title: "Create Clawd memes (set of 5)",
+    description: "Make 5 high-quality memes about AI agents, Clawdbot, or the Clawd ecosystem. Must be funny, shareable, and use the 🦀 aesthetic.",
+    reward: 0.10,
+    difficulty: "Easy",
+    timeEstimate: "20 min",
+    verificationPrompt: "Does this show memes related to Clawd/Clawdbot/AI agents? Look for: humor, shareability, crab theme or AI agent theme, at least 5 distinct memes."
+  },
+  {
+    id: 6,
+    title: "Build a Clawdbot Discord bot integration",
+    description: "Create a Discord bot that interfaces with Clawdbot via the gateway API. Should support basic commands like /ask and /status.",
+    reward: 0.40,
+    difficulty: "Hard",
+    timeEstimate: "3-5 hrs",
+    verificationPrompt: "Does this show a Discord bot integration with Clawdbot? Look for: working bot code, Discord.js or similar, API integration, command handlers."
+  },
+  {
+    id: 7,
+    title: "Write a Twitter thread about AI agents",
+    description: "Write a 5-7 tweet thread explaining what AI agents are, why they matter, and how Clawdbot fits in. Post it live.",
+    reward: 0.08,
+    difficulty: "Easy",
+    timeEstimate: "15 min",
+    verificationPrompt: "Does this show a Twitter thread about AI agents? Look for: 5-7 tweets, educational content about AI agents, mention of Clawdbot, posted publicly."
+  },
+  {
+    id: 8,
+    title: "Research competing AI agent platforms",
+    description: "Create a comparison doc analyzing 5 AI agent platforms (features, pricing, limitations). Include how Clawdbot compares.",
+    reward: 0.18,
+    difficulty: "Medium",
+    timeEstimate: "1.5 hrs",
+    verificationPrompt: "Does this show a comparison of AI agent platforms? Look for: at least 5 platforms compared, features/pricing analysis, Clawdbot comparison, document format."
+  },
+  {
+    id: 9,
+    title: "Create an ASCII art crab logo",
+    description: "Design ASCII art crab (🦀) for terminal display. Should look good in monospace fonts and fit within 80 chars width.",
+    reward: 0.06,
+    difficulty: "Easy",
+    timeEstimate: "20 min",
+    verificationPrompt: "Does this show ASCII art of a crab? Look for: recognizable crab shape, fits in 80 character width, looks good in monospace, creative design."
+  },
+  {
+    id: 10,
+    title: "Report and document a Clawdbot bug",
+    description: "Find a real bug in Clawdbot, document reproduction steps, and submit a proper GitHub issue. Must be a new, valid bug.",
     reward: 0.15,
     difficulty: "Medium",
-    timeEstimate: "30 min",
-    verificationPrompt: "Is this a logo design for JobAI? Is it minimal and tech-focused with green/black colors?"
+    timeEstimate: "varies",
+    verificationPrompt: "Does this show a valid bug report? Look for: clear reproduction steps, actual bug (not feature request), GitHub issue link, detailed description."
   }
 ];
 
@@ -104,20 +166,20 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
 
     const job = jobs.find(j => j.id === parseInt(jobId));
     if (!job) {
-      return res.status(404).json({ error: 'Job not found' });
+      return res.status(404).json({ error: 'Task not found' });
     }
 
-    console.log(`\n📥 Submission for: "${job.title}"`);
+    console.log(`\n🦀 Submission for: "${job.title}"`);
     console.log(`   Wallet: ${wallet}`);
     console.log(`   Has image: ${!!imageFile}`);
-    console.log(`   Text: ${proofText || 'none'}`);
+    console.log(`   Notes: ${proofText || 'none'}`);
 
     // Verify with AI if configured
     let approved = false;
     let reason = '';
 
     if (openai && imageFile) {
-      console.log('🤖 Verifying with AI...');
+      console.log('🤖 AI verification in progress...');
       
       const base64Image = imageFile.buffer.toString('base64');
       const mimeType = imageFile.mimetype;
@@ -127,14 +189,24 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a work verification AI. Analyze the submitted proof image and determine if the task was completed. Be fair but not too strict. Respond with JSON: { "approved": true/false, "reason": "brief explanation" }'
+            content: `You are a task verification AI for Clawdployer, a platform where humans complete tasks for the Clawd ecosystem. 
+            
+Analyze submissions fairly but thoroughly. Approve good-faith efforts that meet the core requirements. Reject low-effort or off-topic submissions.
+
+Respond with JSON: { "approved": true/false, "reason": "brief explanation (1-2 sentences)" }`
           },
           {
             role: 'user',
             content: [
               {
                 type: 'text',
-                text: `Task: ${job.title}\nDescription: ${job.description}\nVerification question: ${job.verificationPrompt}\n\nAdditional info from worker: ${proofText || 'none'}\n\nDid they complete this task?`
+                text: `Task: ${job.title}
+Description: ${job.description}
+Verification criteria: ${job.verificationPrompt}
+
+Worker's notes: ${proofText || 'none'}
+
+Does this submission complete the task?`
               },
               {
                 type: 'image_url',
@@ -153,12 +225,12 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       approved = result.approved;
       reason = result.reason;
       
-      console.log(`   AI verdict: ${approved ? '✅ Approved' : '❌ Rejected'}`);
+      console.log(`   Verdict: ${approved ? '✅ APPROVED' : '❌ REJECTED'}`);
       console.log(`   Reason: ${reason}`);
     } else {
-      // Demo mode - auto approve
+      // Demo mode
       approved = true;
-      reason = 'Auto-approved (demo mode)';
+      reason = 'Auto-approved (demo mode - AI verification not configured)';
     }
 
     // Process payment if approved
@@ -184,7 +256,6 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
         console.log(`   ✅ Payment sent! Tx: ${txSignature}`);
       } catch (payErr) {
         console.error('   ❌ Payment failed:', payErr.message);
-        // Still mark as approved, payment can be retried
       }
     }
 
@@ -224,7 +295,9 @@ app.get('/api/pool', async (req, res) => {
 
 const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
-  console.log(`💼 JobAI running at http://localhost:${PORT}`);
+  console.log(`\n🦀 Clawdployer running at http://localhost:${PORT}`);
+  console.log(`   Tasks: ${jobs.length} deployed`);
   if (!openai) console.log('⚠️  OpenAI not configured - running in demo mode');
   if (!poolKeypair) console.log('⚠️  Pool wallet not configured - payments disabled');
+  console.log('');
 });

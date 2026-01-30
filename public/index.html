@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JobAI | AI Pays You</title>
+  <title>Clawdployer | AI Pays You</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -13,20 +13,32 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --red: #ff0040;
+      --red-dim: #cc0033;
+      --red-glow: rgba(255, 0, 64, 0.3);
+      --bg: #0a0a0a;
+      --bg-light: #111;
+      --border: #1a1a1a;
+      --text: #fff;
+      --text-dim: #888;
+      --text-muted: #444;
+    }
+
     body {
       font-family: 'JetBrains Mono', monospace;
-      background: #0a0a0a;
-      color: #00ff00;
+      background: var(--bg);
+      color: var(--red);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     ::selection {
-      background: #00ff00;
-      color: #0a0a0a;
+      background: var(--red);
+      color: var(--bg);
     }
 
-    /* Scanline effect */
+    /* CRT Scanline effect */
     body::before {
       content: '';
       position: fixed;
@@ -45,23 +57,43 @@
       z-index: 1000;
     }
 
+    /* Red glow overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 0%, var(--red-glow), transparent 60%);
+      z-index: -1;
+    }
+
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 40px;
-      border-bottom: 1px solid #1a1a1a;
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      background: #0a0a0a;
+      background: var(--bg);
       z-index: 100;
     }
 
     .logo {
       font-size: 18px;
       font-weight: 700;
-      color: #00ff00;
+      color: var(--red);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      font-size: 22px;
     }
 
     .nav-links {
@@ -77,11 +109,11 @@
     }
 
     .nav-links a:hover {
-      color: #00ff00;
+      color: var(--red);
     }
 
     .nav-links a.active {
-      color: #00ff00;
+      color: var(--red);
     }
 
     .container {
@@ -97,14 +129,14 @@
 
     .status {
       font-size: 12px;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 20px;
-      animation: blink 1s infinite;
+      animation: pulse 2s infinite;
     }
 
-    @keyframes blink {
-      0%, 50%, 100% { opacity: 1; }
-      25%, 75% { opacity: 0.5; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
     .terminal-prompt {
@@ -113,23 +145,36 @@
       margin-bottom: 30px;
     }
 
+    .terminal-prompt span {
+      color: var(--red);
+    }
+
     h1 {
       font-size: 20px;
       font-weight: 400;
-      color: #888;
+      color: var(--text-dim);
       margin-bottom: 20px;
       line-height: 1.6;
     }
 
-    h1 span {
-      color: #00ff00;
+    h1 .highlight {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .tagline {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px var(--red-glow);
     }
 
     .cursor {
       display: inline-block;
       width: 10px;
       height: 20px;
-      background: #00ff00;
+      background: var(--red);
       animation: cursor 1s infinite;
       vertical-align: middle;
       margin-left: 5px;
@@ -142,14 +187,14 @@
 
     .section-label {
       font-size: 12px;
-      color: #444;
+      color: var(--text-muted);
       margin-bottom: 30px;
     }
 
     h2 {
       font-size: 24px;
       font-weight: 600;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 20px;
     }
 
@@ -165,22 +210,24 @@
     }
 
     .loop-step {
-      background: #111;
-      border: 1px solid #1a1a1a;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
       padding: 30px;
       position: relative;
+      transition: all 0.3s;
     }
 
     .loop-step:hover {
-      border-color: #00ff00;
+      border-color: var(--red);
+      box-shadow: 0 0 30px var(--red-glow);
     }
 
     .step-number {
       position: absolute;
       top: -1px;
       left: -1px;
-      background: #00ff00;
-      color: #0a0a0a;
+      background: var(--red);
+      color: var(--bg);
       padding: 5px 12px;
       font-size: 12px;
       font-weight: 600;
@@ -188,39 +235,40 @@
 
     .step-title {
       font-size: 14px;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 10px;
       margin-top: 20px;
     }
 
     .step-desc {
       font-size: 13px;
-      color: #666;
+      color: var(--text-dim);
       line-height: 1.6;
     }
 
     .step-code {
       font-size: 12px;
-      color: #444;
+      color: var(--text-muted);
       margin-top: 15px;
     }
 
     .why-section {
       margin-top: 60px;
       padding: 40px;
-      background: #111;
-      border: 1px solid #1a1a1a;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
     }
 
     .why-section h3 {
       font-size: 14px;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 15px;
     }
 
     .why-section p {
       font-size: 13px;
-      color: #888;
+      color: var(--text-dim);
       line-height: 1.8;
     }
 
@@ -232,8 +280,8 @@
     .btn {
       display: inline-block;
       padding: 15px 40px;
-      background: #00ff00;
-      color: #0a0a0a;
+      background: var(--red);
+      color: var(--bg);
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
@@ -242,26 +290,62 @@
     }
 
     .btn:hover {
-      background: #00cc00;
+      background: var(--red-dim);
+      box-shadow: 0 0 30px var(--red-glow);
     }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid #00ff00;
-      color: #00ff00;
+      border: 1px solid var(--red);
+      color: var(--red);
     }
 
     .btn-outline:hover {
-      background: #00ff00;
-      color: #0a0a0a;
+      background: var(--red);
+      color: var(--bg);
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 5px;
     }
 
     footer {
-      border-top: 1px solid #1a1a1a;
+      border-top: 1px solid var(--border);
       padding: 40px;
       text-align: center;
       font-size: 12px;
-      color: #444;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 768px) {
@@ -273,101 +357,165 @@
         flex-direction: column;
         gap: 20px;
       }
+
+      .stats-bar {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .tagline {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/" class="logo">$JOBAI</a>
+    <a href="/" class="logo">
+      <span class="logo-icon">🦀</span>
+      CLAWDPLOYER
+    </a>
     <div class="nav-links">
       <a href="/#protocol">protocol</a>
       <a href="/tasks">tasks</a>
       <a href="/payouts">payouts</a>
-      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" target="_blank">$JOBAI</a>
-      <a href="https://x.com/jobappfun" target="_blank">community</a>
+      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" target="_blank">$CLAWD</a>
+      <a href="https://x.com/clawdployer" target="_blank">community</a>
     </div>
   </nav>
 
   <div class="container">
     <section class="hero">
-      <div class="status">SYSTEM_STATUS: OPERATIONAL</div>
-      <div class="terminal-prompt">ai@jobai:~$</div>
+      <div class="status">▪ DEPLOYING AGENTS ▪ NETWORK ACTIVE ▪</div>
+      <div class="terminal-prompt"><span>clawd</span>@deployer:~$</div>
+      <div class="tagline">Deploy Tasks. Get Paid.</div>
       <h1>
-        <span>The first AI that pays you to work.</span><br><br>
-        Real tasks. Real verification. Real payments.<br>
-        No bosses. No applications. Just work and earn.
+        <span class="highlight">The AI that pays humans to build the future.</span><br><br>
+        Complete Clawd tasks. AI verifies your work.<br>
+        Instant SOL payments. No middlemen.
       </h1>
       <span class="cursor"></span>
     </section>
 
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-value" id="totalPaid">0.00</div>
+        <div class="stat-label">SOL PAID OUT</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="tasksCompleted">0</div>
+        <div class="stat-label">TASKS COMPLETED</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="activeWorkers">0</div>
+        <div class="stat-label">ACTIVE WORKERS</div>
+      </div>
+    </div>
+
     <section class="protocol-section" id="protocol">
-      <div class="section-label">// CORE PROTOCOL</div>
-      <h2>The Job Loop</h2>
-      <p style="color: #666; font-size: 14px;">A perpetual cycle where AI posts jobs, verifies work, and pays humans autonomously.</p>
+      <div class="section-label">// DEPLOYMENT PROTOCOL</div>
+      <h2>The Clawd Loop</h2>
+      <p style="color: #666; font-size: 14px;">An autonomous cycle where AI deploys tasks, verifies completions, and rewards contributors instantly.</p>
 
       <div class="loop-grid">
         <div class="loop-step">
           <div class="step-number">01</div>
-          <div class="step-title">pool.fill()</div>
-          <div class="step-desc">Job pool accumulates funds from protocol revenue and token taxes.</div>
-          <div class="step-code">balance += revenue</div>
+          <div class="step-title">treasury.fill()</div>
+          <div class="step-desc">Treasury accumulates SOL from protocol fees and community contributions.</div>
+          <div class="step-code">balance += protocolRevenue</div>
         </div>
 
         <div class="loop-step">
           <div class="step-number">02</div>
-          <div class="step-title">ai.analyze(pool)</div>
-          <div class="step-desc">AI analyzes available budget and generates appropriate tasks.</div>
-          <div class="step-code">tasks = generateTasks(budget)</div>
+          <div class="step-title">clawd.deploy(tasks)</div>
+          <div class="step-desc">AI generates and deploys Clawd ecosystem tasks based on community needs.</div>
+          <div class="step-code">queue = prioritizeTasks(needs)</div>
         </div>
 
         <div class="loop-step">
           <div class="step-number">03</div>
-          <div class="step-title">jobs.publish()</div>
-          <div class="step-desc">AI broadcasts available jobs with clear requirements and rewards.</div>
-          <div class="step-code">emit JobPosted(id, reward, requirements)</div>
+          <div class="step-title">tasks.broadcast()</div>
+          <div class="step-desc">Tasks go live with clear specs, deadlines, and reward amounts.</div>
+          <div class="step-code">emit TaskDeployed(id, specs, reward)</div>
         </div>
 
         <div class="loop-step">
           <div class="step-number">04</div>
-          <div class="step-title">worker.submit(proof)</div>
-          <div class="step-desc">Humans complete jobs and submit proof of work.</div>
-          <div class="step-code">submitProof(jobId, evidence)</div>
+          <div class="step-title">worker.submit()</div>
+          <div class="step-desc">Workers complete tasks and submit proof of their contributions.</div>
+          <div class="step-code">submit(taskId, proof, metadata)</div>
         </div>
 
         <div class="loop-step">
           <div class="step-number">05</div>
-          <div class="step-title">ai.verify(multimodal)</div>
-          <div class="step-desc">AI validates work using vision, text, and pattern analysis.</div>
-          <div class="step-code">isValid = await verify(proof)</div>
+          <div class="step-title">ai.verify(proof)</div>
+          <div class="step-desc">Claude-powered verification analyzes submissions for quality and accuracy.</div>
+          <div class="step-code">verdict = await clawd.verify(proof)</div>
         </div>
 
         <div class="loop-step">
           <div class="step-number">06</div>
-          <div class="step-title">payment.execute()</div>
-          <div class="step-desc">Verified work triggers instant SOL transfer to worker.</div>
-          <div class="step-code">transfer(worker.wallet, reward)</div>
+          <div class="step-title">reward.execute()</div>
+          <div class="step-desc">Verified work triggers instant SOL transfer to worker's wallet.</div>
+          <div class="step-code">transfer(worker.pubkey, amount)</div>
         </div>
       </div>
 
       <div class="why-section">
-        <h3>> Why does this matter?</h3>
+        <h3>> What is Clawdployer?</h3>
         <p>
-          "I got paid by an AI" isn't just a sentence—it's a paradigm shift. 
-          No resumes. No interviews. No waiting for approval. 
-          Just complete the task, prove you did it, and get paid instantly.
-          This is the future of work: permissionless, instant, and autonomous.
+          Clawdployer is the work layer for the Clawd ecosystem. 
+          Need content? Skills? Ideas? Deploy a task and the community delivers.
+          AI verifies quality. Smart contracts handle payment. No invoices, no waiting, no bullshit.
+          <br><br>
+          You're not working <em>for</em> an AI — you're working <em>with</em> one.
+          The future of decentralized work starts here.
         </p>
       </div>
     </section>
 
     <section class="cta-section">
-      <a href="/tasks" class="btn">View Available Jobs</a>
-      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" class="btn btn-outline" target="_blank">Buy $JOBAI</a>
+      <a href="/tasks" class="btn">View Deployed Tasks</a>
+      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" class="btn btn-outline" target="_blank">Buy $CLAWD</a>
     </section>
   </div>
 
   <footer>
-    <p>JobAI Protocol — Built on Solana — Powered by AI</p>
+    <p>Clawdployer Protocol — Built on Solana — Powered by <a href="https://clawd.bot" target="_blank">Clawd</a></p>
   </footer>
+
+  <script>
+    // Animate stats on load
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      const range = end - start;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const value = start + (range * progress);
+        
+        if (id === 'totalPaid') {
+          obj.textContent = value.toFixed(2);
+        } else {
+          obj.textContent = Math.floor(value);
+        }
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+
+    // Simulated stats - would come from API in production
+    setTimeout(() => {
+      animateValue('totalPaid', 0, 42.5, 2000);
+      animateValue('tasksCompleted', 0, 187, 2000);
+      animateValue('activeWorkers', 0, 34, 2000);
+    }, 500);
+  </script>
 </body>
 </html>

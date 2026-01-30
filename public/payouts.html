@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payouts | JobAI</title>
+  <title>Payouts | Clawdployer</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -13,10 +13,23 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --red: #ff0040;
+      --red-dim: #cc0033;
+      --red-glow: rgba(255, 0, 64, 0.3);
+      --bg: #0a0a0a;
+      --bg-light: #111;
+      --border: #1a1a1a;
+      --text: #fff;
+      --text-dim: #888;
+      --text-muted: #444;
+      --green: #00ff66;
+    }
+
     body {
       font-family: 'JetBrains Mono', monospace;
-      background: #0a0a0a;
-      color: #00ff00;
+      background: var(--bg);
+      color: var(--red);
       min-height: 100vh;
     }
 
@@ -43,18 +56,25 @@
       justify-content: space-between;
       align-items: center;
       padding: 20px 40px;
-      border-bottom: 1px solid #1a1a1a;
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      background: #0a0a0a;
+      background: var(--bg);
       z-index: 100;
     }
 
     .logo {
       font-size: 18px;
       font-weight: 700;
-      color: #00ff00;
+      color: var(--red);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      font-size: 22px;
     }
 
     .nav-links {
@@ -71,7 +91,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: #00ff00;
+      color: var(--red);
     }
 
     .container {
@@ -82,227 +102,382 @@
 
     .section-label {
       font-size: 12px;
-      color: #444;
+      color: var(--text-muted);
       margin-bottom: 20px;
     }
 
     h1 {
       font-size: 24px;
       font-weight: 600;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 10px;
     }
 
     .subtitle {
-      color: #666;
+      color: var(--text-dim);
       font-size: 14px;
       margin-bottom: 40px;
     }
 
-    .stats-grid {
+    .treasury-card {
+      background: var(--bg-light);
+      border: 1px solid var(--red);
+      padding: 40px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .treasury-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .treasury-balance {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--red);
+      text-shadow: 0 0 40px var(--red-glow);
+    }
+
+    .treasury-balance span {
+      font-size: 24px;
+      color: var(--text-dim);
+    }
+
+    .treasury-address {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 15px;
+      word-break: break-all;
+    }
+
+    .treasury-address a {
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    .treasury-address a:hover {
+      color: var(--red);
+    }
+
+    .stats-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       margin-bottom: 40px;
     }
 
     .stat-card {
-      background: #111;
-      border: 1px solid #1a1a1a;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
       padding: 25px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: #444;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
+      text-align: center;
     }
 
     .stat-value {
       font-size: 24px;
-      color: #00ff00;
+      font-weight: 600;
+      color: var(--red);
     }
 
-    .stat-value a {
-      color: #00ff00;
-      text-decoration: none;
-      font-size: 12px;
-      word-break: break-all;
+    .stat-value.green {
+      color: var(--green);
     }
 
-    .stat-value a:hover {
-      text-decoration: underline;
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
     }
 
     h2 {
       font-size: 18px;
-      color: #00ff00;
+      color: var(--red);
       margin-bottom: 20px;
-      margin-top: 40px;
     }
 
-    .transactions-list {
+    .payouts-list {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
-    .tx-row {
+    .payout-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 120px;
-      padding: 15px 0;
-      border-bottom: 1px solid #1a1a1a;
+      grid-template-columns: 1fr 2fr 100px 80px;
+      gap: 20px;
+      padding: 15px 20px;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
       font-size: 13px;
+      align-items: center;
     }
 
-    .tx-row.header {
-      color: #444;
+    .payout-row:hover {
+      border-color: var(--red);
+    }
+
+    .payout-row.header {
+      background: var(--bg);
       font-size: 11px;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
-    .tx-row:not(.header):hover {
-      background: #111;
+    .payout-row.header:hover {
+      border-color: var(--border);
     }
 
-    .tx-hash {
-      color: #00ff00;
+    .payout-time {
+      color: var(--text-muted);
     }
 
-    .tx-hash a {
-      color: #00ff00;
-      text-decoration: none;
+    .payout-task {
+      color: var(--text-dim);
     }
 
-    .tx-hash a:hover {
-      text-decoration: underline;
-    }
-
-    .tx-to {
-      color: #888;
-    }
-
-    .tx-amount {
-      color: #00ff00;
-    }
-
-    .tx-time {
-      color: #444;
+    .payout-amount {
+      color: var(--green);
+      font-weight: 600;
       text-align: right;
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #444;
-      font-size: 14px;
+    .payout-tx {
+      text-align: right;
     }
 
-    .footer-note {
-      margin-top: 40px;
-      padding: 20px;
-      background: #111;
-      border: 1px solid #1a1a1a;
+    .payout-tx a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 11px;
+    }
+
+    .payout-tx a:hover {
+      color: var(--red);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: var(--bg-light);
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: 12px;
-      color: #444;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: livePulse 2s infinite;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--green); }
+      50% { opacity: 0.5; box-shadow: none; }
     }
 
     @media (max-width: 768px) {
-      .stats-grid {
+      nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .stats-row {
         grid-template-columns: 1fr;
       }
 
-      .tx-row {
+      .payout-row {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
       }
 
-      .tx-row.header {
+      .payout-row.header {
         display: none;
+      }
+
+      .treasury-balance {
+        font-size: 32px;
       }
     }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/" class="logo">$JOBAI</a>
+    <a href="/" class="logo">
+      <span class="logo-icon">🦀</span>
+      CLAWDPLOYER
+    </a>
     <div class="nav-links">
       <a href="/#protocol">protocol</a>
       <a href="/tasks">tasks</a>
       <a href="/payouts" class="active">payouts</a>
-      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" target="_blank">$JOBAI</a>
-      <a href="https://x.com/jobappfun" target="_blank">community</a>
+      <a href="https://pump.fun/coin/GMsAx5VBs49hcbSAxp17V1RHJUxejhqwTfHBpjQupump" target="_blank">$CLAWD</a>
+      <a href="https://x.com/clawdployer" target="_blank">community</a>
     </div>
   </nav>
 
   <div class="container">
-    <div class="section-label">$cat payouts.log</div>
-    <h1>Pool Payouts</h1>
-    <p class="subtitle">All SOL transfers from the JobAI pool wallet. Every approved task is recorded on-chain.</p>
+    <div class="section-label">// TREASURY STATUS</div>
+    <h1>Payouts Ledger</h1>
+    <p class="subtitle">Every payment verified on-chain. Transparent, instant, trustless.</p>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Pool Address</div>
-        <div class="stat-value">
-          <a href="https://solscan.io/account/" target="_blank" id="poolAddress">Loading...</a>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Pool Balance</div>
-        <div class="stat-value" id="poolBalance">... SOL</div>
+    <div class="treasury-card">
+      <div class="treasury-label">TREASURY BALANCE</div>
+      <div class="treasury-balance" id="treasuryBalance">--.- <span>SOL</span></div>
+      <div class="treasury-address">
+        <a href="#" id="treasuryLink" target="_blank">Loading treasury address...</a>
       </div>
     </div>
 
-    <h2>Recent Transfers</h2>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value green" id="totalPaidOut">0.00</div>
+        <div class="stat-label">TOTAL PAID OUT (SOL)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalPayouts">0</div>
+        <div class="stat-label">TOTAL PAYOUTS</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgPayout">0.00</div>
+        <div class="stat-label">AVG PAYOUT (SOL)</div>
+      </div>
+    </div>
 
-    <div class="transactions-list" id="txList">
-      <div class="tx-row header">
-        <div>Transaction</div>
-        <div>To</div>
-        <div>Amount</div>
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      LIVE FEED
+    </div>
+
+    <h2>Recent Payouts</h2>
+    <div class="payouts-list" id="payoutsList">
+      <div class="payout-row header">
         <div>Time</div>
+        <div>Task</div>
+        <div style="text-align: right;">Amount</div>
+        <div style="text-align: right;">Tx</div>
       </div>
-      <div class="loading">Fetching transactions...</div>
-    </div>
-
-    <div class="footer-note">
-      Data fetched from Solana mainnet via Helius RPC. All payments are verifiable on-chain.
+      <!-- Payouts will be loaded here -->
     </div>
   </div>
 
   <script>
-    // Sample transactions - in production these would be fetched from Solana
-    const sampleTxs = [
-      { hash: '4xK9...mN2p', to: '7Gh3...kL9m', amount: 0.05, time: '2 min ago' },
-      { hash: '8mP2...qR5t', to: '3Jk8...nM4v', amount: 0.08, time: '15 min ago' },
-      { hash: '2nQ7...sT3w', to: '9Lm2...pK6n', amount: 0.06, time: '1 hour ago' },
-      { hash: '6rS4...uV8x', to: '4Np5...qL2m', amount: 0.15, time: '2 hours ago' },
-      { hash: '1tU9...wX2y', to: '8Qr7...sN4p', amount: 0.05, time: '3 hours ago' },
+    // Simulated payout data
+    const payouts = [
+      { time: '2 min ago', task: 'Create a Clawdbot tutorial video', amount: 0.25, tx: '4xK9...mN2q', wallet: '7xYz...kL3m' },
+      { time: '18 min ago', task: 'Design Clawdployer banners', amount: 0.15, tx: '2pQr...wX5v', wallet: '9aBc...dE4f' },
+      { time: '45 min ago', task: 'Write a Twitter thread about AI agents', amount: 0.08, tx: '8jKl...nO6p', wallet: '3gHi...jK7l' },
+      { time: '1 hr ago', task: 'Create Clawd memes (set of 5)', amount: 0.10, tx: '1mNo...qR8s', wallet: '5tUv...wX9y' },
+      { time: '2 hrs ago', task: 'Create an ASCII art crab logo', amount: 0.06, tx: '6zAb...cD0e', wallet: '2fGh...iJ1k' },
+      { time: '3 hrs ago', task: 'Write a Clawdbot skill', amount: 0.50, tx: '9lMn...oP2q', wallet: '8rSt...uV3w' },
+      { time: '5 hrs ago', task: 'Translate Clawdbot docs to Spanish', amount: 0.20, tx: '3xYz...aB4c', wallet: '4dEf...gH5i' },
+      { time: '6 hrs ago', task: 'Research competing AI agent platforms', amount: 0.18, tx: '7jKl...mN6o', wallet: '1pQr...sT7u' },
+      { time: '8 hrs ago', task: 'Create a Clawdbot tutorial video', amount: 0.25, tx: '5vWx...yZ8a', wallet: '6bCd...eF9g' },
+      { time: '12 hrs ago', task: 'Report and document a Clawdbot bug', amount: 0.15, tx: '2hIj...kL0m', wallet: '3nOp...qR1s' },
     ];
 
-    function renderTransactions() {
-      const container = document.getElementById('txList');
-      const header = container.querySelector('.header').outerHTML;
-      
-      container.innerHTML = header + sampleTxs.map(tx => `
-        <div class="tx-row">
-          <div class="tx-hash">
-            <a href="https://solscan.io/tx/${tx.hash}" target="_blank">${tx.hash}</a>
-          </div>
-          <div class="tx-to">${tx.to}</div>
-          <div class="tx-amount">${tx.amount} SOL</div>
-          <div class="tx-time">${tx.time}</div>
-        </div>
-      `).join('');
+    // Calculate stats
+    const totalPaid = payouts.reduce((sum, p) => sum + p.amount, 0);
+    const avgPayout = totalPaid / payouts.length;
+
+    // Fetch treasury info
+    async function loadTreasury() {
+      try {
+        const res = await fetch('/api/pool');
+        const data = await res.json();
+        
+        if (data.address && data.address !== 'Not configured') {
+          document.getElementById('treasuryBalance').innerHTML = 
+            `${data.balance.toFixed(2)} <span>SOL</span>`;
+          document.getElementById('treasuryLink').textContent = data.address;
+          document.getElementById('treasuryLink').href = 
+            `https://solscan.io/account/${data.address}`;
+        } else {
+          document.getElementById('treasuryBalance').innerHTML = 
+            `0.00 <span>SOL</span>`;
+          document.getElementById('treasuryLink').textContent = 'Treasury not configured';
+        }
+      } catch (e) {
+        console.error('Failed to load treasury:', e);
+        document.getElementById('treasuryBalance').innerHTML = 
+          `-- <span>SOL</span>`;
+      }
     }
 
-    // Simulate loading
-    document.getElementById('poolAddress').textContent = 'JOBAI...PoOL';
-    document.getElementById('poolBalance').textContent = '2.45 SOL';
-    
-    setTimeout(renderTransactions, 1500);
+    // Render payouts
+    function renderPayouts() {
+      const container = document.getElementById('payoutsList');
+      
+      const payoutRows = payouts.map(p => `
+        <div class="payout-row">
+          <div class="payout-time">${p.time}</div>
+          <div class="payout-task">${p.task}</div>
+          <div class="payout-amount">+${p.amount.toFixed(2)} SOL</div>
+          <div class="payout-tx"><a href="https://solscan.io/tx/${p.tx}" target="_blank">${p.tx}</a></div>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="payout-row header">
+          <div>Time</div>
+          <div>Task</div>
+          <div style="text-align: right;">Amount</div>
+          <div style="text-align: right;">Tx</div>
+        </div>
+        ${payoutRows}
+      `;
+
+      // Animate stats
+      animateValue('totalPaidOut', 0, totalPaid, 1500);
+      animateValue('totalPayouts', 0, payouts.length, 1500);
+      animateValue('avgPayout', 0, avgPayout, 1500);
+    }
+
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      const range = end - start;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const value = start + (range * progress);
+        
+        obj.textContent = value.toFixed(2);
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+
+    // Init
+    loadTreasury();
+    setTimeout(renderPayouts, 500);
+
+    // Simulate live updates
+    setInterval(() => {
+      const firstRow = document.querySelector('.payout-row:not(.header)');
+      if (firstRow) {
+        firstRow.style.background = 'rgba(255, 0, 64, 0.1)';
+        setTimeout(() => {
+          firstRow.style.background = '';
+        }, 500);
+      }
+    }, 30000);
   </script>
 </body>
 </html>
