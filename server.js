@@ -51,7 +51,7 @@ if (process.env.POOL_PRIVATE_KEY) {
   }
 }
 
-// Clawdployer Tasks
+// clawdployed.fun Tasks
 const jobs = [
   {
     id: 1,
@@ -73,8 +73,8 @@ const jobs = [
   },
   {
     id: 3,
-    title: "Design Clawdployer banners",
-    description: "Create a set of 3 social media banners for Clawdployer (Twitter header, Discord banner, and a 1080x1080 square). Red/black theme with the 🦀 crab.",
+    title: "Design clawdployed.fun banners",
+    description: "Create a set of 3 social media banners for clawdployed.fun (Twitter header, Discord banner, and a 1080x1080 square). Red/black theme with the 🦀 crab.",
     reward: 0.15,
     difficulty: "Easy",
     timeEstimate: "30 min",
@@ -197,7 +197,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: `You are a task verification AI for Clawdployer, a platform where humans complete tasks for the Clawd ecosystem. 
+            content: `You are a task verification AI for clawdployed.fun, a platform where humans complete tasks for the Clawd ecosystem. 
             
 Analyze submissions fairly but thoroughly. Approve good-faith efforts that meet the core requirements. Reject low-effort or off-topic submissions.
 
@@ -303,7 +303,7 @@ app.get('/api/pool', async (req, res) => {
 
 const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
-  console.log(`\n🦀 Clawdployer running at http://localhost:${PORT}`);
+  console.log(`\n🦀 clawdployed.fun running at http://localhost:${PORT}`);
   console.log(`   Tasks: ${jobs.length} deployed`);
   if (!openai) console.log('⚠️  OpenAI not configured - running in demo mode');
   if (!poolKeypair) console.log('⚠️  Pool wallet not configured - payments disabled');
